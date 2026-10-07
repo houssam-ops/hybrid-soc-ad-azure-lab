@@ -1,0 +1,14 @@
+# Détection brute-force — Event ID 4625 (échec de logon)
+# Environnement Windows en français (TA-windows FR)
+# Nom_du_compte est un champ MULTIVALUÉ :
+#   valeur 0 = Subject (compte/machine qui a initié la tentative)
+#   valeur 1 = compte réellement ciblé par l'échec de logon
+# lower() doit s'appliquer AVANT replace() : "GREEN/" (NetBIOS, majuscules)
+# n'est fusionné avec le compte nu que si la casse est normalisée en premier
+index=main EventCode=4625
+| eval compte_cible=mvindex(Nom_du_compte, 1)
+| eval compte_minuscule=lower(compte_cible)
+| eval compte_propre=replace(compte_minuscule, "green/", "")
+| where compte_propre!="-" AND compte_propre!=""
+| stats count by compte_propre
+| where count > 2
