@@ -1,0 +1,24 @@
+# Détection Kerberoasting — Event ID 4769 (demande de ticket de service Kerberos / TGS)
+# Champs en ANGLAIS malgré l'environnement Windows FR (extraction TA-windows différente du 4625)
+#
+# Simulation : au lieu de Rubeus.exe (non compilé — le repo GhostPack/Rubeus ne fournit
+# que le code source, pas de binaire précompilé), la demande de ticket TGS a été simulée
+# nativement en PowerShell via la classe .NET System.IdentityModel :
+#
+#   Add-Type -AssemblyName System.IdentityModel
+#   New-Object System.IdentityModel.Tokens.KerberosRequestorSecurityToken `
+#       -ArgumentList "MSSQLSvc/dc.green.com:1433"
+#
+# Cette méthode déclenche la même requête réseau Kerberos (TGS-REQ/TGS-REP) que Rubeus,
+# et génère donc le même artefact côté DC (Event ID 4769) avec le même type de
+# chiffrement RC4 (0x17) pour un compte de service — l'indicateur clé du Kerberoasting.
+#
+# Seuil : count > 0 au lieu de > 3 (valeur du guide original). Le seuil > 3 suppose
+# plusieurs comptes SPN interrogés d'un coup (cas Rubeus en boucle sur tout le domaine).
+# Ce lab n'a qu'un seul compte avec SPN (svc-sql), donc count sera toujours à 1 ;
+# le vrai signal ici est Ticket_Encryption_Type=0x17 (RC4, faible) demandé pour un
+# compte de service, pas le volume de requêtes.
+index=main EventCode=4769
+| search Ticket_Encryption_Type=0x17
+| stats count by Account_Name, Service_Name
+| where count > 0
