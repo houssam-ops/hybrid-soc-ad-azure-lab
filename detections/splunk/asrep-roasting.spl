@@ -1,0 +1,25 @@
+# Détection AS-REP Roasting — Event ID 4768 (demande de TGT initial)
+# Champs en ANGLAIS malgré l'environnement Windows FR (comme pour le 4769)
+#
+# Prérequis : préauth Kerberos désactivée sur le compte ciblé (DoesNotRequirePreAuth)
+#   Set-ADAccountControl -Identity "svc-sql" -DoesNotRequirePreAuth $true
+#
+# Simulation : forcer une authentification initiale sous l'identité du compte
+# vulnérable, avec un mot de passe arbitraire (peu importe lequel, puisque la
+# préauth désactivée fait que le DC répond par un AS-REP AVANT toute vérification
+# du mot de passe) :
+#
+#   runas /user:svc-sql@green.com /netonly cmd
+#   (dans la fenêtre ouverte) dir \\DC1\C$
+#
+# Note : /netonly seul ne suffit pas à déclencher la requête Kerberos — il faut
+# une vraie tentative d'accès réseau (ici dir \\DC1\C$) dans la session ouverte
+# pour que Windows contacte effectivement le DC.
+#
+# Signal de détection : Pre_Authentication_Type=0 (aucune préauth effectuée).
+# Contrairement au Kerberoasting, le Ticket_Encryption_Type de l'AS-REP n'est
+# PAS un indicateur fiable ici (dépend de la config Kerberos du domaine, observé
+# en 0x12/AES256 dans ce lab) — ne pas filtrer dessus.
+index=main EventCode=4768
+| search Pre_Authentication_Type=0
+| table _time, Account_Name, host
