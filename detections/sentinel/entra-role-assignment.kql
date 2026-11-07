@@ -1,0 +1,7 @@
+// Review directory-role changes. This is not the Azure resource RBAC log.
+AuditLogs
+| where TimeGenerated > ago(15m)
+| where Category == "RoleManagement" and Result =~ "success"
+| where OperationName in~ ("Add member to role", "Add eligible member to role", "Add member to role completed (PIM activation)")
+| extend ActorUser=tostring(InitiatedBy.user.userPrincipalName), ActorApp=tostring(InitiatedBy.app.displayName)
+| project TimeGenerated, OperationName, ActorUser, ActorApp, TargetResources, CorrelationId

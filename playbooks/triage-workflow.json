@@ -1,0 +1,45 @@
+{
+  "$schema": "https://schema.management.azure.com/providers/Microsoft.Logic/schemas/2016-06-01/workflowdefinition.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {},
+  "triggers": {
+    "Manual_lab_triage": {
+      "type": "Request",
+      "kind": "Http",
+      "inputs": {
+        "schema": {
+          "type": "object",
+          "properties": {
+            "incidentId": {"type": "string"},
+            "actorObjectId": {"type": "string"},
+            "targetObjectId": {"type": "string"},
+            "ruleName": {"type": "string"}
+          },
+          "required": ["incidentId", "ruleName"]
+        }
+      }
+    }
+  },
+  "actions": {
+    "Build_review_record": {
+      "type": "Compose",
+      "inputs": {
+        "incidentId": "@triggerBody()?['incidentId']",
+        "ruleName": "@triggerBody()?['ruleName']",
+        "actorObjectId": "@triggerBody()?['actorObjectId']",
+        "targetObjectId": "@triggerBody()?['targetObjectId']",
+        "decision": "human-review-required",
+        "containmentExecuted": false,
+        "nextStep": "Verify actor versus target, evidence, lab scope and approval before containment."
+      },
+      "runAfter": {}
+    },
+    "Return_review_record": {
+      "type": "Response",
+      "kind": "Http",
+      "inputs": {"statusCode": 202, "body": "@outputs('Build_review_record')"},
+      "runAfter": {"Build_review_record": ["Succeeded"]}
+    }
+  },
+  "outputs": {}
+}

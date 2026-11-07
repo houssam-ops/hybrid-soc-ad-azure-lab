@@ -1,0 +1,6 @@
+index=ad_lab earliest=-15m latest=now (source="WinEventLog:System" OR source="XmlWinEventLog:System") (EventCode=7045)
+| rex field=_raw "<Data Name=\"ImagePath\">(?<image_xml>[^<]+)</Data>"
+| rex field=_raw "<Data Name=\"ServiceName\">(?<service_xml>[^<]+)</Data>"
+| eval image=lower(coalesce(image_xml,ImagePath,Service_File_Name)), service=lower(coalesce(service_xml,ServiceName,Service_Name))
+| where like(image,"%psexesvc%") OR like(service,"%psexesvc%")
+| table _time host service image AccountName

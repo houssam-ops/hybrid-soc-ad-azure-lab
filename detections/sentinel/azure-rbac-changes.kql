@@ -1,0 +1,7 @@
+// All successful assignment writes require review; resolve the roleDefinitionId
+// and target principal before classifying a change as privilege escalation.
+AzureActivity
+| where TimeGenerated > ago(15m)
+| where OperationNameValue =~ "MICROSOFT.AUTHORIZATION/ROLEASSIGNMENTS/WRITE"
+| where ActivityStatusValue =~ "Success"
+| project TimeGenerated, Caller, CallerIpAddress, ResourceId, ResourceGroup, SubscriptionId, Properties_d, CorrelationId

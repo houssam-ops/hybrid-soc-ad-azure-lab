@@ -1,0 +1,5 @@
+index=ad_lab earliest=-15m latest=now (source="WinEventLog:Microsoft-Windows-Sysmon/Operational" OR source="XmlWinEventLog:Microsoft-Windows-Sysmon/Operational") (EventCode=1)
+| rex field=_raw "<Data Name=\"CommandLine\">(?<command_xml>[^<]+)</Data>"
+| eval command=lower(coalesce(command_xml,CommandLine))
+| where (like(command,"%ntdsutil%") AND like(command,"%ifm%")) OR (like(command,"%vssadmin%") AND like(command,"%create%shadow%"))
+| table _time host User Image command ParentImage

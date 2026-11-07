@@ -1,0 +1,6 @@
+index=ad_lab earliest=-15m latest=now (source="WinEventLog:Microsoft-Windows-Sysmon/Operational" OR source="XmlWinEventLog:Microsoft-Windows-Sysmon/Operational") (EventCode=10)
+| rex field=_raw "<Data Name=\"TargetImage\">(?<target_xml>[^<]+)</Data>"
+| rex field=_raw "<Data Name=\"SourceImage\">(?<source_xml>[^<]+)</Data>"
+| eval target=lower(coalesce(target_xml,TargetImage)), process=coalesce(source_xml,SourceImage)
+| where like(target,"%\\lsass.exe")
+| table _time host process target GrantedAccess SourceProcessGUID

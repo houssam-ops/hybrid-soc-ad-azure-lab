@@ -1,0 +1,18 @@
+# Local evidence can contain identities, internal topology and secrets.
+artifacts/
+.env
+.env.*
+*.evtx
+*.dmp
+*.pcap
+*.pcapng
+*.vdi
+*.vmdk
+*.pem
+*.key
+*credentials*.json
+*azurehound*.json
+*sharphound*.zip
+__pycache__/
+.pytest_cache/
+.venv/

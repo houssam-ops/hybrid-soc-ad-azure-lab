@@ -1,0 +1,245 @@
+[
+  {
+    "id": "baseline-authentication",
+    "title": "Baseline des authentifications",
+    "engine": "splunk",
+    "path": "detections/splunk/baseline-authentication.spl",
+    "attack": [],
+    "status": "lab-validation-pending",
+    "prerequisites": [
+      "Security collecté sur DC et WS1"
+    ],
+    "false_positives": "Activité normale : cette recherche est un rapport, pas une alerte.",
+    "expected": "Séries temporelles par événement, sans volume normal inventé."
+  },
+  {
+    "id": "initial-access-bruteforce",
+    "title": "Échecs répétés pour un compte",
+    "engine": "splunk",
+    "path": "detections/splunk/initial-access-bruteforce.spl",
+    "attack": [
+      "T1110"
+    ],
+    "status": "lab-validation-pending",
+    "prerequisites": [
+      "Audit Logon en échec; seuil de lab 3 échecs / 5 minutes"
+    ],
+    "false_positives": "Mot de passe oublié, service avec mot de passe expiré.",
+    "expected": "Une ligne par compte et fenêtre de cinq minutes; n’est pas une preuve de password spraying."
+  },
+  {
+    "id": "kerberoasting",
+    "title": "Ticket de service RC4 à examiner",
+    "engine": "splunk",
+    "path": "detections/splunk/kerberoasting.spl",
+    "attack": [
+      "T1558.003"
+    ],
+    "status": "lab-validation-pending",
+    "prerequisites": [
+      "Audit Kerberos Service Ticket Operations sur DC; champ résultat vérifié"
+    ],
+    "false_positives": "Services hérités utilisant RC4; RC4 seul ne prouve pas le vol ou le cassage d’un ticket.",
+    "expected": "Une demande RC4 réussie suffit au triage dans ce petit lab; AES ne déclenche pas cette règle étroite."
+  },
+  {
+    "id": "asrep-roasting",
+    "title": "TGT émis sans préauthentification",
+    "engine": "splunk",
+    "path": "detections/splunk/asrep-roasting.spl",
+    "attack": [
+      "T1558.004"
+    ],
+    "status": "lab-validation-pending",
+    "prerequisites": [
+      "Audit Kerberos Authentication Service sur DC"
+    ],
+    "false_positives": "Compte volontairement exempté de préauthentification; pas de preuve de cassage hors ligne.",
+    "expected": "TGT réussi sans préauth; ne pas exiger RC4."
+  },
+  {
+    "id": "lsass-access",
+    "title": "Accès à LSASS à qualifier",
+    "engine": "splunk",
+    "path": "detections/splunk/lsass-access.spl",
+    "attack": [
+      "T1003.001"
+    ],
+    "status": "lab-validation-pending",
+    "prerequisites": [
+      "Sysmon ProcessAccess activé et canal collecté"
+    ],
+    "false_positives": "Antivirus, EDR, outils système légitimes; accès ne signifie pas dump réussi.",
+    "expected": "Événement Sysmon 10 ciblant LSASS, avec processus source à investiguer."
+  },
+  {
+    "id": "dcsync",
+    "title": "Droits de réplication observés",
+    "engine": "splunk",
+    "path": "detections/splunk/dcsync.spl",
+    "attack": [
+      "T1003.006"
+    ],
+    "status": "lab-validation-pending",
+    "prerequisites": [
+      "Audit Directory Service Access; SACL adaptée sur la racine du domaine"
+    ],
+    "false_positives": "Réplication normale des DC et comptes de synchronisation; établir une allowlist justifiée, ne pas exclure tous les comptes finissant par $.",
+    "expected": "Usage de droits de réplication à corréler avec le rôle du compte; pas de preuve autonome d’exfiltration."
+  },
+  {
+    "id": "ntds-extraction",
+    "title": "Outils de copie AD à examiner",
+    "engine": "splunk",
+    "path": "detections/splunk/ntds-extraction.spl",
+    "attack": [
+      "T1003.003"
+    ],
+    "status": "lab-validation-pending",
+    "prerequisites": [
+      "Sysmon ProcessCreate avec ligne de commande"
+    ],
+    "false_positives": "Sauvegardes et administration; création de shadow copy seule n’établit pas un vol NTDS.",
+    "expected": "Processus et commande à qualifier; ne pas lire Event 8222 comme un journal de création de processus."
+  },
+  {
+    "id": "lateral-smb-psexec",
+    "title": "Installation de service de type PsExec",
+    "engine": "splunk",
+    "path": "detections/splunk/lateral-smb-psexec.spl",
+    "attack": [
+      "T1021.002",
+      "T1569.002"
+    ],
+    "status": "lab-validation-pending",
+    "prerequisites": [
+      "Canal System collecté; service nommé PSEXESVC pour ce signal précis"
+    ],
+    "false_positives": "PsExec utilisé légitimement par un administrateur; noms personnalisés non couverts.",
+    "expected": "Installation suspecte à corréler avec 4624 type 3 et les événements SMB."
+  },
+  {
+    "id": "lateral-rdp",
+    "title": "Connexion RDP réussie",
+    "engine": "splunk",
+    "path": "detections/splunk/lateral-rdp.spl",
+    "attack": [
+      "T1021.001"
+    ],
+    "status": "lab-validation-pending",
+    "prerequisites": [
+      "Audit Logon en succès sur la destination"
+    ],
+    "false_positives": "Administration RDP normale; ce petit lab ne nécessite pas plusieurs destinations.",
+    "expected": "Connexion distante interactive observée; sans affirmer qu’elle est malveillante."
+  },
+  {
+    "id": "scheduled-task",
+    "title": "Création de tâche planifiée",
+    "engine": "splunk",
+    "path": "detections/splunk/scheduled-task.spl",
+    "attack": [
+      "T1053.005"
+    ],
+    "status": "lab-validation-pending",
+    "prerequisites": [
+      "Audit Other Object Access Events en succès"
+    ],
+    "false_positives": "Installation logicielle, maintenance.",
+    "expected": "Nouvelle tâche; examiner son XML et le compte créateur avant de conclure à une persistance."
+  },
+  {
+    "id": "new-service",
+    "title": "Création de service",
+    "engine": "splunk",
+    "path": "detections/splunk/new-service.spl",
+    "attack": [
+      "T1543.003"
+    ],
+    "status": "lab-validation-pending",
+    "prerequisites": [
+      "Canal System collecté"
+    ],
+    "false_positives": "Agent de sécurité ou installation approuvée.",
+    "expected": "Nouveau service avec image à vérifier; signal de triage générique."
+  },
+  {
+    "id": "local-admin-membership",
+    "title": "Ajout au groupe Administrators local",
+    "engine": "splunk",
+    "path": "detections/splunk/local-admin-membership.spl",
+    "attack": [
+      "T1098"
+    ],
+    "status": "lab-validation-pending",
+    "prerequisites": [
+      "Audit Security Group Management en succès sur WS1"
+    ],
+    "false_positives": "Ajout administratif approuvé; le SID évite la dépendance Administrators/Administrateurs.",
+    "expected": "Membre ajouté au groupe intégré; sur DC, vérifier la portée du groupe, pas de SAM locale classique."
+  },
+  {
+    "id": "anomalous-sync-signin",
+    "title": "Connexions rapprochées de comptes techniques de test",
+    "engine": "sentinel",
+    "path": "detections/sentinel/anomalous-sync-signin.kql",
+    "attack": [
+      "T1078.004"
+    ],
+    "status": "cloud-deployment-pending",
+    "prerequisites": [
+      "Connecteur alimentant SigninLogs; licence et droits vérifiés",
+      "Identifiants de lab configurés si liste Monitored présente"
+    ],
+    "false_positives": "Automatisation habituelle; fréquence seule non suffisante.",
+    "expected": "Résultat à valider dans le tenant; aucune exécution cloud revendiquée."
+  },
+  {
+    "id": "service-principal-signins",
+    "title": "Connexions de service principals surveillés",
+    "engine": "sentinel",
+    "path": "detections/sentinel/service-principal-signins.kql",
+    "attack": [
+      "T1078.004"
+    ],
+    "status": "cloud-deployment-pending",
+    "prerequisites": [
+      "Connecteur alimentant AADServicePrincipalSignInLogs; licence et droits vérifiés",
+      "Identifiants de lab configurés si liste Monitored présente"
+    ],
+    "false_positives": "Déploiements et applications légitimes; tout succès est un signal de revue.",
+    "expected": "Résultat à valider dans le tenant; aucune exécution cloud revendiquée."
+  },
+  {
+    "id": "entra-role-assignment",
+    "title": "Modification de rôle annuaire Entra",
+    "engine": "sentinel",
+    "path": "detections/sentinel/entra-role-assignment.kql",
+    "attack": [
+      "T1098.003"
+    ],
+    "status": "cloud-deployment-pending",
+    "prerequisites": [
+      "Connecteur alimentant AuditLogs; licence et droits vérifiés",
+      "Identifiants de lab configurés si liste Monitored présente"
+    ],
+    "false_positives": "Attributions administratives ou activations PIM approuvées.",
+    "expected": "Résultat à valider dans le tenant; aucune exécution cloud revendiquée."
+  },
+  {
+    "id": "azure-rbac-changes",
+    "title": "Attribution de rôle sur une ressource Azure",
+    "engine": "sentinel",
+    "path": "detections/sentinel/azure-rbac-changes.kql",
+    "attack": [
+      "T1098.003"
+    ],
+    "status": "cloud-deployment-pending",
+    "prerequisites": [
+      "Connecteur alimentant AzureActivity; licence et droits vérifiés",
+      "Identifiants de lab configurés si liste Monitored présente"
+    ],
+    "false_positives": "Déploiement autorisé; résoudre la définition du rôle avant de parler de privilège élevé.",
+    "expected": "Résultat à valider dans le tenant; aucune exécution cloud revendiquée."
+  }
+]

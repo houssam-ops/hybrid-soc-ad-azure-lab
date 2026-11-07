@@ -1,0 +1,7 @@
+# Replace the example address with the receiver's private lab IP.
+# Lab-only TCP forwarding; use a validated TLS configuration outside this isolated lab.
+[tcpout]
+defaultGroup = soc_lab
+
+[tcpout:soc_lab]
+server = 192.168.56.20:9997

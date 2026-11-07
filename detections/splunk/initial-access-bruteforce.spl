@@ -1,14 +1,9 @@
-# Détection brute-force — Event ID 4625 (échec de logon)
-# Environnement Windows en français (TA-windows FR)
-# Nom_du_compte est un champ MULTIVALUÉ :
-#   valeur 0 = Subject (compte/machine qui a initié la tentative)
-#   valeur 1 = compte réellement ciblé par l'échec de logon
-# lower() doit s'appliquer AVANT replace() : "GREEN/" (NetBIOS, majuscules)
-# n'est fusionné avec le compte nu que si la casse est normalisée en premier
-index=main EventCode=4625
-| eval compte_cible=mvindex(Nom_du_compte, 1)
-| eval compte_minuscule=lower(compte_cible)
-| eval compte_propre=replace(compte_minuscule, "green/", "")
-| where compte_propre!="-" AND compte_propre!=""
-| stats count by compte_propre
-| where count > 2
+index=ad_lab earliest=-15m latest=now (source="WinEventLog:Security" OR source="XmlWinEventLog:Security") (EventCode=4625)
+| rex field=_raw "<Data Name=\"TargetUserName\">(?<account_xml>[^<]+)</Data>"
+| eval account=lower(coalesce(account_xml, TargetUserName, mvindex(Account_Name,-1), mvindex(Nom_du_compte,-1)))
+| where isnotnull(account) AND account!="-"
+| rex field=_raw "<Data Name=\"IpAddress\">(?<src_xml>[^<]+)</Data>"
+| eval src=coalesce(src_xml,IpAddress,Source_Network_Address,"unknown")
+| bin _time span=5m
+| stats count as failures values(src) as sources values(host) as hosts by _time account
+| where failures>=3

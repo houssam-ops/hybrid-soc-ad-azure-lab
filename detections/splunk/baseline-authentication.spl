@@ -1,0 +1,2 @@
+index=ad_lab earliest=-24h latest=now (source="WinEventLog:Security" OR source="XmlWinEventLog:Security") (EventCode=4624 OR EventCode=4768 OR EventCode=4769)
+| timechart span=1h count by EventCode

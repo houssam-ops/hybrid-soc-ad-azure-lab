@@ -1,0 +1,44 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="720" viewBox="0 0 1200 720" role="img" aria-labelledby="title desc">
+<title id="title">Hybrid SOC : architecture cible, socle deux VM et extension cloud</title>
+<desc id="desc">Windows Server DC1 envoie ses événements à Splunk sur WS1. Sysmon et journaux Windows alimentent les recherches. Entra Connect, Sentinel et Logic Apps sont une extension à déployer. Aucune flèche ne représente une compromission démontrée.</desc>
+<defs><marker id="arrow" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto"><path d="M0 0 L10 5 L0 10z" fill="#24a99c"/></marker></defs>
+<rect width="1200" height="720" rx="24" fill="#0d1b2a"/>
+<g font-family="DejaVu Sans,Arial,sans-serif">
+<text x="48" y="53" fill="#62dfcd" font-size="15" letter-spacing="3">HOUSSAM ZOUHEIR / DETECTION ENGINEERING</text>
+<text x="48" y="104" fill="#ffffff" font-size="37" font-weight="bold">Hybrid SOC · Active Directory &amp; Azure</text>
+<text x="48" y="141" fill="#b9c9d9" font-size="18">Architecture cible : socle local à vérifier · extension cloud à déployer</text>
+<rect x="40" y="176" width="690" height="423" rx="16" fill="#152b3e" stroke="#34536b"/>
+<text x="66" y="214" fill="#ffffff" font-size="22" font-weight="bold">01 / LAB VIRTUALBOX · DEUX VM</text>
+<rect x="65" y="247" width="270" height="173" rx="12" fill="#213b50"/>
+<text x="86" y="283" fill="#62dfcd" font-size="21" font-weight="bold">Windows Server / DC1</text>
+<text x="86" y="319" fill="#ffffff" font-size="17">AD DS + DNS (à vérifier)</text>
+<text x="86" y="350" fill="#c6d3e0" font-size="17">Security / System / Sysmon</text>
+<text x="86" y="382" fill="#c6d3e0" font-size="17">Universal Forwarder</text>
+<rect x="420" y="247" width="283" height="173" rx="12" fill="#213b50"/>
+<text x="442" y="283" fill="#62dfcd" font-size="21" font-weight="bold">WS1 / Splunk de lab</text>
+<text x="442" y="319" fill="#ffffff" font-size="17">Splunk si OS compatible</text>
+<text x="442" y="350" fill="#c6d3e0" font-size="17">Journaux locaux + réception</text>
+<text x="442" y="382" fill="#c6d3e0" font-size="17">Index ad_lab / recherches SPL</text>
+<path d="M336 338 H411" fill="none" stroke="#24a99c" stroke-width="3" marker-end="url(#arrow)"/>
+<text x="347" y="316" fill="#b9c9d9" font-size="13">9997</text>
+<rect x="65" y="452" width="638" height="116" rx="12" fill="#0f2434"/>
+<text x="86" y="488" fill="#ffffff" font-size="19" font-weight="bold">Collecter → normaliser → détecter → qualifier</text>
+<text x="86" y="520" fill="#c6d3e0" font-size="17">XML nommé · fenêtres temporelles · faux positifs</text>
+<text x="86" y="546" fill="#c6d3e0" font-size="16">Preuves réelles et contrôles négatifs encore à enregistrer</text>
+<rect x="760" y="176" width="400" height="423" rx="16" fill="#152b3e" stroke="#6d88a1" stroke-width="2" stroke-dasharray="8 6"/>
+<text x="785" y="214" fill="#ffffff" font-size="22" font-weight="bold">02 / EXTENSION CLOUD</text>
+<text x="785" y="244" fill="#f3c777" font-size="16">NON DÉPLOYÉE / NON VALIDÉE</text>
+<rect x="785" y="265" width="350" height="74" rx="10" fill="#213b50"/>
+<text x="804" y="295" fill="#ffffff" font-size="18">Entra ID + serveur Connect dédié</text>
+<text x="804" y="322" fill="#c6d3e0" font-size="15">Synchronisation limitée aux objets de test</text>
+<rect x="785" y="359" width="350" height="89" rx="10" fill="#213b50"/>
+<text x="804" y="389" fill="#62dfcd" font-size="19" font-weight="bold">Microsoft Sentinel / KQL</text>
+<text x="804" y="416" fill="#c6d3e0" font-size="15">Connexions Entra + applications</text>
+<text x="804" y="438" fill="#c6d3e0" font-size="15">Audit annuaire + Azure Activity</text>
+<rect x="785" y="469" width="350" height="99" rx="10" fill="#213b50"/>
+<text x="804" y="500" fill="#ffffff" font-size="19">Logic Apps / triage</text>
+<text x="804" y="528" fill="#c6d3e0" font-size="16">Revue humaine avant confinement</text>
+<text x="804" y="550" fill="#c6d3e0" font-size="15">Aucune désactivation automatique livrée</text>
+<text x="48" y="644" fill="#ffffff" font-size="19">Une architecture explique un objectif. Les événements et les preuves démontrent un résultat.</text>
+<text x="48" y="679" fill="#8fa8be" font-size="16">Les flèches représentent les flux de télémétrie, pas un chemin de compromission établi.</text>
+</g></svg>

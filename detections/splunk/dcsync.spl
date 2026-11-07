@@ -1,0 +1,9 @@
+index=ad_lab earliest=-15m latest=now (source="WinEventLog:Security" OR source="XmlWinEventLog:Security") (EventCode=4662)
+| rex field=_raw "<Data Name=\"SubjectUserName\">(?<account_xml>[^<]+)</Data>"
+| eval account=lower(coalesce(account_xml, SubjectUserName, mvindex(Account_Name,-1), mvindex(Nom_du_compte,-1)))
+| where isnotnull(account) AND account!="-"
+| rex field=_raw "<Data Name=\"Properties\">(?<properties_xml>[^<]+)</Data>"
+| rex field=_raw "<Data Name=\"AccessMask\">(?<access_xml>[^<]+)</Data>"
+| eval properties=lower(coalesce(properties_xml,Properties)), access=lower(coalesce(access_xml,AccessMask,Access_Mask))
+| where (access="0x100" OR access="256") AND (like(properties,"%1131f6aa-9c07-11d1-f79f-00c04fc2dcd2%") OR like(properties,"%1131f6ad-9c07-11d1-f79f-00c04fc2dcd2%"))
+| table _time host account access properties

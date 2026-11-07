@@ -1,0 +1,8 @@
+// Configure exact lab user UPNs. Empty list deliberately returns no results.
+let MonitoredUsers = dynamic([]);
+SigninLogs
+| where TimeGenerated > ago(15m)
+| where tolower(UserPrincipalName) in (MonitoredUsers)
+| where tostring(ResultType) == "0"
+| summarize Signins=count(), Apps=make_set(AppDisplayName, 20) by UserPrincipalName, IPAddress, bin(TimeGenerated, 5m)
+| where Signins >= 3

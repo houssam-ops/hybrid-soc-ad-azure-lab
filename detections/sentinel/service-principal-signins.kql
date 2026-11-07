@@ -1,0 +1,7 @@
+// Configure lab service principal object IDs, NOT application/client IDs.
+let MonitoredServicePrincipals = dynamic([]);
+AADServicePrincipalSignInLogs
+| where TimeGenerated > ago(15m)
+| where ServicePrincipalId in (MonitoredServicePrincipals)
+| where tostring(ResultType) == "0"
+| project TimeGenerated, ServicePrincipalId, ServicePrincipalName, AppId, IPAddress, ResourceDisplayName, CorrelationId

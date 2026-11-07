@@ -1,0 +1,15 @@
+<Events>
+  <!-- SYNTHETIC FIXTURE: not captured from a VM and not proof of an attack. -->
+  <Event xmlns="http://schemas.microsoft.com/win/2004/08/events/event">
+    <System><Provider Name="Microsoft-Windows-Security-Auditing"/><EventID>4625</EventID><TimeCreated SystemTime="2026-01-01T12:00:00Z"/><Channel>Security</Channel><Computer>WS1.lab.test</Computer></System>
+    <EventData><Data Name="SubjectUserName">WS1$</Data><Data Name="TargetUserName">demo-user</Data><Data Name="IpAddress">192.0.2.10</Data><Data Name="Status">0xc000006d</Data></EventData>
+  </Event>
+  <Event xmlns="http://schemas.microsoft.com/win/2004/08/events/event">
+    <System><Provider Name="Microsoft-Windows-Security-Auditing"/><EventID>4768</EventID><TimeCreated SystemTime="2026-01-01T12:01:00Z"/><Channel>Security</Channel><Computer>DC1.lab.test</Computer></System>
+    <EventData><Data Name="TargetUserName">demo-service</Data><Data Name="PreAuthType">0</Data><Data Name="TicketEncryptionType">0x12</Data><Data Name="Status">0x0</Data></EventData>
+  </Event>
+  <Event xmlns="http://schemas.microsoft.com/win/2004/08/events/event">
+    <System><Provider Name="Microsoft-Windows-Security-Auditing"/><EventID>4769</EventID><TimeCreated SystemTime="2026-01-01T12:02:00Z"/><Channel>Security</Channel><Computer>DC1.lab.test</Computer></System>
+    <EventData><Data Name="TargetUserName">demo-user@lab.test</Data><Data Name="ServiceName">demo-sql</Data><Data Name="TicketEncryptionType">0x17</Data><Data Name="Status">0x0</Data></EventData>
+  </Event>
+</Events>
